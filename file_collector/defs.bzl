@@ -10,6 +10,8 @@ FileCollector = provider(
 
 def _file_collector_aspect_impl(target, ctx):
     # This function is executed for each dependency the aspect visits.
+
+    # Find the expected extensions based on the setting.
     extensions = ctx.attr._extensions[_ExtensionsProvider].extensions
 
     # Collect files from the srcs
@@ -28,7 +30,7 @@ def _file_collector_aspect_impl(target, ctx):
     print(files)
     return [FileCollector(files = files)]
 
-file_collector = aspect(
+collector = aspect(
     attr_aspects = ["deps"],
     attrs = {
         "_extensions": attr.label(default = ":extensions"),
@@ -38,11 +40,11 @@ file_collector = aspect(
 
 _ExtensionsProvider = provider(fields = ["extensions"])
 
-def _file_collector_extensions_impl(ctx):
+def _extensions_impl(ctx):
     extensions = ctx.build_setting_value
     return _ExtensionsProvider(extensions = extensions)
 
-file_collector_extensions_setting = rule(
-    implementation = _file_collector_extensions_impl,
+extensions_setting = rule(
+    implementation = _extensions_impl,
     build_setting = config.string_list(flag = True),
 )
