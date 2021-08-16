@@ -1,12 +1,12 @@
 # Demo of using Starlark Build Flags with Starlark Aspects
 
-(Starlark Aspects)[docs.bazel.build/versions/main/skylark/aspects.html) can use
-(Starlark Build
-Settings)[docs.bazel.build/versions/main/skylark/config.html#user-defined-build-settings]
+[Starlark Aspects](https://docs.bazel.build/versions/main/skylark/aspects.html) can use
+[Starlark Build
+Settings](https://docs.bazel.build/versions/main/skylark/config.html#user-defined-build-settings)
 to configure themselves.
 
 This repo takes the example aspect from
-(bazelbuild/examples/rules/aspect)[https://github.com/bazelbuild/examples/blog/main/rules/aspect],
+[bazelbuild/examples/rules/aspect](https://github.com/bazelbuild/examples/blob/main/rules/aspect),
 updates it to be useful at the top level, and adds a command-line flag for
 configuration.
 
