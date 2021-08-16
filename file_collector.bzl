@@ -15,7 +15,6 @@ def _file_collector_aspect_impl(target, ctx):
     direct = [
         f
         for f in ctx.rule.files.srcs
-        if ctx.attr.extension == "*" or ctx.attr.extension == f.extension
     ]
 
     # Combine direct files with the files from the dependencies.
@@ -24,39 +23,12 @@ def _file_collector_aspect_impl(target, ctx):
         transitive = [dep[FileCollector].files for dep in ctx.rule.attr.deps],
     )
 
+    print(files)
     return [FileCollector(files = files)]
 
-file_collector_aspect = aspect(
-    implementation = _file_collector_aspect_impl,
+file_collector = aspect(
     attr_aspects = ["deps"],
     attrs = {
-        "extension": attr.string(values = ["*", "h", "cc"]),
     },
+    implementation = _file_collector_aspect_impl,
 )
-
-def _file_collector_rule_impl(ctx):
-    # This function is executed once per `file_collector`.
-
-    # Write the collected information to the output file.
-    content = []
-    for dep in ctx.attr.deps:
-        files = [f.short_path for f in dep[FileCollector].files.to_list()]
-        content.append("files from {}: {}".format(dep.label, files))
-    content.append("")  # trailing newline
-
-    ctx.actions.write(
-        output = ctx.outputs.out,
-        content = "\n".join(content),
-    )
-
-_file_collector = rule(
-    implementation = _file_collector_rule_impl,
-    attrs = {
-        "deps": attr.label_list(aspects = [file_collector_aspect]),
-        "extension": attr.string(default = "*"),
-        "out": attr.output(),
-    },
-)
-
-def file_collector(**kwargs):
-    _file_collector(out = "{name}.files".format(**kwargs), **kwargs)
